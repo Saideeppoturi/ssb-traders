@@ -1,0 +1,209 @@
+{
+  "products": [
+    {
+      "id": "c1",
+      "name": "Bharathi Ultrafast cement",
+      "category": "Cement",
+      "price": 300,
+      "unit": "bag",
+      "stock": 400,
+      "description": "Ultra-strong cement for robust foundations and structural elements.",
+      "image": "/Bharathi-Ultrafast-Cement.png"
+    },
+    {
+      "id": "c2",
+      "name": "Nagarjuna Visista Cement",
+      "category": "Cement",
+      "price": 260,
+      "unit": "bag",
+      "stock": 700,
+      "description": "High-performance cement known for durability and crack resistance.",
+      "image": "/nagarjuna_visista.jpeg"
+    },
+    {
+      "id": "c3",
+      "name": "Priya Cement",
+      "category": "Cement",
+      "price": 260,
+      "unit": "bag",
+      "stock": 500,
+      "description": "Premium quality cement suitable for all types of construction.",
+      "image": "/priya_cement.png"
+    },
+    {
+      "id": "s1",
+      "name": "Kamdhenu Nxt 550 TMT",
+      "category": "Steel",
+      "price": 79,
+      "unit": "ton",
+      "stock": 30,
+      "description": "Next-generation steel bars with superior strength and double rib pattern.",
+      "image": "/kamedhenu_steel.webp"
+    },
+    {
+      "id": "s2",
+      "name": "AF Star 550D",
+      "category": "Steel",
+      "price": 72,
+      "unit": "ton",
+      "stock": 40,
+      "description": "Ductile high-strength steel bars for earthquake-resistant projects.",
+      "image": "/afstar_550d.png"
+    },
+    {
+      "name": "bharathi cement",
+      "category": "Cement",
+      "price": 280,
+      "unit": "bag",
+      "stock": 1500,
+      "description": "",
+      "image": "/bharathi-cement.jpg",
+      "id": "new-1773590512841"
+    }
+  ],
+  "orders": [
+    {
+      "customer": {
+        "name": "tester ",
+        "phone": "8789708978",
+        "address": "skhghkj",
+        "location": {
+          "lat": 17.60630688363143,
+          "lng": 78.08381003994133,
+          "type": "current"
+        }
+      },
+      "items": [
+        {
+          "id": "c3",
+          "name": "Priya Cement",
+          "category": "Cement",
+          "price": 260,
+          "unit": "bag",
+          "stock": 500,
+          "description": "Premium quality cement suitable for all types of construction.",
+          "image": "/priya_cement.png",
+          "quantity": 66
+        }
+      ],
+      "subtotal": 17160,
+      "transportFee": 79,
+      "total": 17239,
+      "paymentMethod": "online",
+      "deliveryType": "current",
+      "id": "SSB-1773670261338",
+      "date": "2026-03-16T14:11:01.338Z",
+      "otp": "2904",
+      "status": "Pending",
+      "paymentConfirmed": false
+    },
+    {
+      "customer": {
+        "name": "Test Customer",
+        "phone": "9876543210",
+        "address": "Manipal University Gate 3 Sangareddy",
+        "location": {
+          "type": "other"
+        }
+      },
+      "items": [
+        {
+          "id": "c1",
+          "name": "Bharathi Ultrafast cement",
+          "category": "Cement",
+          "price": 300,
+          "unit": "bag",
+          "stock": 400,
+          "description": "Ultra-strong cement for robust foundations and structural elements.",
+          "image": "/Bharathi-Ultrafast-Cement.png",
+          "quantity": 5
+        }
+      ],
+      "subtotal": 1500,
+      "transportFee": 500,
+      "total": 2000,
+      "paymentMethod": "online",
+      "deliveryType": "other",
+      "id": "SSB-1773668894211",
+      "date": "2026-03-16T13:48:14.211Z",
+      "otp": "5857",
+      "status": "Delivered",
+      "paymentConfirmed": true
+    },
+    {
+      "customer": {
+        "name": "Saideep poturi",
+        "phone": "09398722945",
+        "location": "manipal university,gate 3"
+      },
+      "items": [
+        {
+          "id": "c1",
+          "name": "Bharathi Ultrafast cement",
+          "category": "Cement",
+          "price": 300,
+          "unit": "bag",
+          "stock": 400,
+          "description": "Ultra-strong cement for robust foundations and structural elements.",
+          "image": "/Bharathi-Ultrafast-Cement.png",
+          "quantity": 10
+        }
+      ],
+      "total": 3000,
+      "paymentMethod": "onsite",
+      "status": "Dispatched",
+      "id": "SSB-1773593612029",
+      "date": "2026-03-15T16:53:32.029Z"
+    },
+    {
+      "customer": {
+        "name": "Saideep poturi",
+        "phone": "09398722945",
+        "location": "manipal university,gate 3"
+      },
+      "items": [
+        {
+          "id": "c2",
+          "name": "Nagarjuna Visista Cement",
+          "category": "Cement",
+          "price": 260,
+          "unit": "bag",
+          "stock": 1500,
+          "description": "High-performance cement known for durability and crack resistance.",
+          "image": "/nagarjuna_visista.jpeg",
+          "quantity": 5
+        }
+      ],
+      "total": 1300,
+      "paymentMethod": "online",
+      "status": "Pending",
+      "id": "SSB-1773592152336",
+      "date": "2026-03-15T16:29:12.336Z"
+    },
+    {
+      "customer": {
+        "name": "Saideep poturi",
+        "phone": "09398722945",
+        "location": "manipal university,gate 3"
+      },
+      "items": [
+        {
+          "id": "c1",
+          "name": "Bharathi Ultrafast cement",
+          "category": "Cement",
+          "price": 300,
+          "unit": "bag",
+          "stock": 400,
+          "description": "Ultra-strong cement for robust foundations and structural elements.",
+          "image": "/bharathi-cement.jpg",
+          "quantity": 20
+        }
+      ],
+      "total": 6000,
+      "paymentMethod": "onsite",
+      "status": "Pending",
+      "id": "SSB-1773591051752",
+      "date": "2026-03-15T16:10:51.752Z"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+    "name": "ssb-traders-workspace",
+    "version": "1.0.0",
+    "description": "Root workspace for SSB Traders",
+    "scripts": {
+        "server": "npm start --prefix server",
+        "customer": "npm run dev --prefix customer -- -p 3000",
+        "manager": "npm run dev --prefix manager -- -p 3001",
+        "start-all": "npm run server & npm run customer & npm run manager"
+    },
+    "dependencies": {
+        "concurrently": "^8.2.2"
+    }
+}
