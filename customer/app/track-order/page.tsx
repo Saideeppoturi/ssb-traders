@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { Suspense } from 'react';
 import { API_URL } from '@/lib/api';
 
 const STATUS_STEPS = ['Pending', 'Confirmed', 'Dispatched', 'Delivered'];
@@ -13,7 +14,7 @@ const STATUS_CONFIG: Record<string, { color: string; icon: string; description: 
     'Delivered': { color: '#22C55E', icon: '📦', description: 'Order delivered successfully' }
 };
 
-export default function TrackOrderPage() {
+function TrackOrderContent() {
     const searchParams = useSearchParams();
     const [orderId, setOrderId] = useState(searchParams.get('id') || '');
     const [order, setOrder] = useState<any>(null);
@@ -284,5 +285,13 @@ export default function TrackOrderPage() {
                 </div>
             )}
         </div>
+    );
+}
+
+export default function TrackOrderPage() {
+    return (
+        <Suspense fallback={<div className="container" style={{ textAlign: 'center', padding: '4rem' }}><p>Loading tracker...</p></div>}>
+            <TrackOrderContent />
+        </Suspense>
     );
 }
