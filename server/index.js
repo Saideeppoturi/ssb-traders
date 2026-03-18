@@ -17,18 +17,46 @@ const MONGODB_URI = process.env.MONGODB_URI;
 
 // Connect to MongoDB
 let isConnected = false;
-mongoose.connect(MONGODB_URI)
-    .then(() => {
-        console.log('✅ Connected to MongoDB Atlas');
-        isConnected = true;
+
+if (!MONGODB_URI) {
+    console.error('❌ MONGODB_URI is not defined in environment variables.');
+} else {
+    console.log('Attempting to connect to MongoDB...');
+    mongoose.connect(MONGODB_URI, {
+        serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
     })
-    .catch(err => {
-        console.error('❌ MongoDB Connection Error:', err.message);
-        console.warn('⚠️ Server will fallback to local db.json for data store.');
-    });
+        .then(() => {
+            const dbName = mongoose.connection.name;
+            console.log(`✅ Connected to MongoDB Atlas (Database: ${dbName})`);
+            isConnected = true;
+        })
+        .catch(err => {
+            console.error('❌ MongoDB Connection Error:', err.name, '-', err.message);
+            if (err.name === 'MongooseServerSelectionError') {
+                console.warn('👉 This usually means the IP is not whitelisted in MongoDB Atlas.');
+            }
+            console.warn('⚠️ Server will fallback to local db.json for data store.');
+        });
+}
 
 // --- Local DB Fallback Helpers ---
-const DB_PATH = path.join(__dirname, '../data-store/db.json');
+// Try multiple possible locations for db.json to be resilient in different environments
+const possiblePaths = [
+    path.join(__dirname, '../data-store/db.json'),
+    path.join(__dirname, 'data-store/db.json'),
+    path.join(process.cwd(), 'data-store/db.json'),
+    path.join(process.cwd(), 'server/data-store/db.json'),
+    '/app/data-store/db.json'
+];
+
+let DB_PATH = possiblePaths[0];
+for (const p of possiblePaths) {
+    if (fs.existsSync(p)) {
+        DB_PATH = p;
+        console.log(`📂 Using local data store at: ${DB_PATH}`);
+        break;
+    }
+}
 
 const getLocalData = (collection) => {
     try {
