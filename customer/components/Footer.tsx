@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function Footer() {
     return (
         <footer style={{
@@ -14,15 +16,21 @@ export default function Footer() {
                 <div>
                     <h3 style={{ color: 'var(--primary)', marginBottom: '1rem', fontWeight: '900' }}>Sri Sai Balaji Traders</h3>
                     <p style={{ color: 'var(--text-muted)', lineHeight: '1.6' }}>
-                        Premium supplier of Cement, Steel, and Binding materials. Quality you can build on.
+                        Premium supplier of Cement and Binding materials. Quality you can build on.
                     </p>
                 </div>
                 <div>
                     <h4 style={{ marginBottom: '1rem' }}>Quick Links</h4>
                     <ul style={{ listStyle: 'none', color: 'var(--text-muted)' }}>
-                        <li style={{ marginBottom: '0.5rem' }}>Products</li>
-                        <li style={{ marginBottom: '0.5rem' }}>About Us</li>
-                        <li style={{ marginBottom: '0.5rem' }}>Locate Us</li>
+                        <li style={{ marginBottom: '0.5rem' }}>
+                            <Link href="/products" style={{ color: 'var(--text-muted)', transition: 'color 0.2s' }}>Products</Link>
+                        </li>
+                        <li style={{ marginBottom: '0.5rem' }}>
+                            <Link href="/about" style={{ color: 'var(--text-muted)', transition: 'color 0.2s' }}>About Us</Link>
+                        </li>
+                        <li style={{ marginBottom: '0.5rem' }}>
+                            <Link href="/location" style={{ color: 'var(--text-muted)', transition: 'color 0.2s' }}>Locate Us</Link>
+                        </li>
                     </ul>
                 </div>
                 <div>

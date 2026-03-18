@@ -11,7 +11,7 @@ export default function LocationPage() {
         <div className="container">
             <h1 style={{ marginBottom: '3rem' }}>Locate <span className="text-gradient">Our Yard</span></h1>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem', alignItems: 'start' }}>
+            <div className="mobile-stack" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem', alignItems: 'start' }}>
                 <div className="glass" style={{ padding: '3rem' }}>
                     <h2 style={{ marginBottom: '1.5rem', fontWeight: '900' }}>Sri Sai Balaji Traders</h2>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>

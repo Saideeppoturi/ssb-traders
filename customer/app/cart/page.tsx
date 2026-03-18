@@ -9,7 +9,7 @@ export default function CartPage() {
     if (cart.length === 0) {
         return (
             <div className="container" style={{ textAlign: 'center', padding: '10vh 0' }}>
-                <h1 style={{ fontSize: '3rem', marginBottom: '2rem' }}>Your <span className="text-gradient">Cart</span> is Empty</h1>
+                <h1 className="page-title" style={{ fontSize: '3rem', marginBottom: '2rem' }}>Your <span className="text-gradient">Cart</span> is Empty</h1>
                 <p style={{ color: 'var(--text-muted)', marginBottom: '3rem' }}>Looks like you haven't added any materials yet.</p>
                 <Link href="/products" className="btn-primary">Browse Products</Link>
             </div>
@@ -18,14 +18,14 @@ export default function CartPage() {
 
     return (
         <div className="container">
-            <h1 style={{ marginBottom: '3rem' }}>Shopping <span className="text-gradient">Cart</span></h1>
+            <h1 className="page-title" style={{ marginBottom: '3rem' }}>Shopping <span className="text-gradient">Cart</span></h1>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '3rem' }}>
+            <div className="mobile-stack" style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '3rem' }}>
                 {/* Items List */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                     {cart.map((item) => (
-                        <div key={item.id} className="glass" style={{ padding: '1.5rem', display: 'flex', gap: '2rem', alignItems: 'center' }}>
-                            <div style={{ position: 'relative', width: '100px', height: '100px', borderRadius: '8px', overflow: 'hidden' }}>
+                        <div key={item.id} className="glass cart-item-row" style={{ padding: '1.5rem', display: 'flex', gap: '2rem', alignItems: 'center' }}>
+                            <div className="cart-item-image" style={{ position: 'relative', width: '100px', height: '100px', borderRadius: '8px', overflow: 'hidden', flexShrink: 0 }}>
                                 <Image src={item.image} alt={item.name} fill style={{ objectFit: 'cover' }} />
                             </div>
                             <div style={{ flex: 1 }}>

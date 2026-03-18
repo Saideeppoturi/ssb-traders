@@ -5,11 +5,11 @@ export default function Home() {
   return (
     <div className="container">
       {/* Hero Section */}
-      <section style={{
+      <section className="mobile-stack" style={{
         display: 'grid',
         gridTemplateColumns: '1fr 1fr',
         alignItems: 'center',
-        gap: '4rem',
+        gap: '2rem',
         padding: '4rem 0',
         minHeight: '70vh'
       }}>
@@ -21,21 +21,21 @@ export default function Home() {
             textTransform: 'uppercase',
             fontSize: '0.9rem'
           }}>
-            Premium Industrial Supplies
+            Premium Building Supplies
           </span>
-          <h1 style={{ fontSize: '4.5rem', fontWeight: '800', margin: '1rem 0', lineHeight: '1.1' }}>
-            Build Your <span className="text-gradient">Vision</span> With Cement & Steel
+          <h1 className="hero-title" style={{ fontSize: '4.5rem', fontWeight: '800', margin: '1rem 0', lineHeight: '1.1' }}>
+            Build Your <span className="text-gradient">Vision</span> With Quality Cement
           </h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '1.25rem', marginBottom: '2.5rem', maxWidth: '500px' }}>
-            SSB Traders delivers high-grade cement, structural steel, and binding materials for projects that stand the test of time.
+          <p className="hero-subtitle" style={{ color: 'var(--text-muted)', fontSize: '1.25rem', marginBottom: '2.5rem', maxWidth: '500px' }}>
+            SSB Traders delivers high-grade cement and binding materials for projects that stand the test of time.
           </p>
-          <div style={{ display: 'flex', gap: '1.5rem' }}>
+          <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
             <Link href="/products" className="btn-primary" style={{ fontSize: '1.1rem' }}>Explore Products</Link>
             <Link href="/location" className="glass" style={{ padding: '0.75rem 1.5rem', fontWeight: '600' }}>Locate Yard</Link>
           </div>
         </div>
 
-        <div style={{ position: 'relative', height: '600px', borderRadius: '24px', overflow: 'hidden' }}>
+        <div className="hero-image" style={{ position: 'relative', height: '600px', borderRadius: '24px', overflow: 'hidden' }}>
           <Image
             src="/shop.png"
             alt="SSB Traders Shop"
@@ -62,15 +62,16 @@ export default function Home() {
 
       {/* Categories / Fast Links */}
       <section style={{ padding: '6rem 0' }}>
-        <h2 style={{ textAlign: 'center', fontSize: '2.5rem', marginBottom: '4rem' }}>Our Core <span style={{ color: 'var(--primary)' }}>Materials</span></h2>
-        <div style={{
+        <h2 className="section-title" style={{ textAlign: 'center', fontSize: '2.5rem', marginBottom: '4rem' }}>Our Core <span style={{ color: 'var(--primary)' }}>Materials</span></h2>
+        <div className="mobile-stack" style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '2.5rem'
+          gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: '2.5rem',
+          maxWidth: '800px',
+          margin: '0 auto'
         }}>
           {[
             { title: 'Cement', img: '/Bharathi-Ultrafast-Cement.png', desc: 'OPC & PPC grades from Top Brands.' },
-            { title: 'Structural Steel', img: '/kamedhenu_steel.webp', desc: 'High-tensile TMT bars and beams.' },
             { title: 'Binding Materials', img: '/binding_wire.jpg', desc: 'Binding wires and essential fixatives.' }
           ].map((item, idx) => (
             <Link href="/products" key={idx} style={{ textDecoration: 'none', color: 'inherit' }}>

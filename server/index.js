@@ -237,9 +237,38 @@ app.post('/api/orders', async (req, res) => {
     }
 });
 
-// PATCH order status
-app.get('/api/orders', (req, res) => {
-    res.json(BANK_DETAILS);
+// PUT update/edit order
+app.put('/api/orders/:id', async (req, res) => {
+    try {
+        const updates = req.body;
+        // Fields that can be edited
+        const allowedFields = ['items', 'subtotal', 'transportFee', 'total', 'customer', 'paymentMethod', 'status', 'paymentConfirmed'];
+        const updateData = {};
+        for (const field of allowedFields) {
+            if (updates[field] !== undefined) {
+                updateData[field] = updates[field];
+            }
+        }
+
+        if (isConnected) {
+            const order = await Order.findOneAndUpdate(
+                { id: req.params.id },
+                updateData,
+                { new: true }
+            );
+            if (!order) return res.status(404).json({ error: 'Order not found' });
+            return res.json({ success: true, order });
+        } else {
+            const orders = getLocalData('orders');
+            const index = orders.findIndex(o => o.id === req.params.id);
+            if (index === -1) return res.status(404).json({ error: 'Order not found' });
+            Object.assign(orders[index], updateData);
+            saveLocalData('orders', orders);
+            return res.json({ success: true, order: orders[index] });
+        }
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to update order', details: err.message });
+    }
 });
 
 // PATCH order status

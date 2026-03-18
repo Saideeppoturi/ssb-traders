@@ -38,6 +38,7 @@ export default function Navbar() {
             {/* Desktop Menu */}
             <div className="mobile-hide" style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
                 <Link href="/products" style={{ fontWeight: '500' }}>Products</Link>
+                <Link href="/about" style={{ fontWeight: '500' }}>About</Link>
                 <Link href="/location" style={{ fontWeight: '500' }}>Location</Link>
                 <Link href="/track-order" style={{ fontWeight: '500' }}>Track Order</Link>
                 <Link href="/cart" className="btn-primary" style={{ padding: '0.5rem 1rem' }}>
@@ -71,6 +72,7 @@ export default function Navbar() {
                     boxShadow: '0 10px 25px rgba(0,0,0,0.3)'
                 }}>
                     <Link href="/products" onClick={() => setIsOpen(false)}>Products</Link>
+                    <Link href="/about" onClick={() => setIsOpen(false)}>About</Link>
                     <Link href="/location" onClick={() => setIsOpen(false)}>Location</Link>
                     <Link href="/track-order" onClick={() => setIsOpen(false)}>Track Order</Link>
                     <Link href="/cart" onClick={() => setIsOpen(false)} className="btn-primary">

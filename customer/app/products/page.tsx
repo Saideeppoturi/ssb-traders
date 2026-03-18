@@ -113,7 +113,7 @@ export default function ProductsPage() {
                             <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem', flex: 1 }}>
                                 {product.description}
                             </p>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem' }}>
+                            <div className="product-actions" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem' }}>
                                 <div>
                                     <span style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>₹{product.price.toLocaleString()}</span>
                                     <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}> / {product.unit}</span>

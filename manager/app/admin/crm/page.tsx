@@ -23,6 +23,8 @@ export default function AdminCRM() {
     const [otpInputs, setOtpInputs] = useState<Record<string, string>>({});
     const [otpErrors, setOtpErrors] = useState<Record<string, string>>({});
     const [otpSuccess, setOtpSuccess] = useState<Record<string, boolean>>({});
+    const [editingOrderId, setEditingOrderId] = useState<string | null>(null);
+    const [editForm, setEditForm] = useState<any>(null);
 
     useEffect(() => {
         const fetchOrders = () => {
@@ -104,6 +106,55 @@ export default function AdminCRM() {
         }
     };
 
+    // --- Edit Order Functions ---
+    const startEditing = (order: any) => {
+        setEditingOrderId(order.id);
+        setEditForm({
+            customer: { ...order.customer },
+            items: order.items?.map((item: any) => ({ ...item })) || [],
+            subtotal: order.subtotal || 0,
+            transportFee: order.transportFee || 0,
+            total: order.total || 0,
+        });
+    };
+
+    const cancelEditing = () => {
+        setEditingOrderId(null);
+        setEditForm(null);
+    };
+
+    const updateEditItem = (index: number, field: string, value: any) => {
+        const newItems = [...editForm.items];
+        newItems[index] = { ...newItems[index], [field]: field === 'quantity' || field === 'price' ? Number(value) : value };
+        const newSubtotal = newItems.reduce((acc: number, item: any) => acc + (item.price * item.quantity), 0);
+        const newTotal = newSubtotal + editForm.transportFee;
+        setEditForm({ ...editForm, items: newItems, subtotal: newSubtotal, total: newTotal });
+    };
+
+    const updateEditTransportFee = (value: number) => {
+        const newTotal = editForm.subtotal + value;
+        setEditForm({ ...editForm, transportFee: value, total: newTotal });
+    };
+
+    const saveEdit = async () => {
+        if (!editingOrderId || !editForm) return;
+        try {
+            const res = await fetch(`${API_URL}/api/orders/${editingOrderId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(editForm)
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setOrders(prev => prev.map(o => o.id === editingOrderId ? { ...o, ...data.order } : o));
+                setEditingOrderId(null);
+                setEditForm(null);
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     return (
         <div>
             <h1 style={{ marginBottom: '3rem' }}>Customer <span className="text-gradient">Orders & CRM</span></h1>
@@ -114,6 +165,7 @@ export default function AdminCRM() {
                     const statusIcon = STATUS_ICONS[order.status] || '❓';
                     const nextStatus = getNextStatus(order.status);
                     const nextAction = getNextAction(order.status);
+                    const isEditing = editingOrderId === order.id;
 
                     return (
                         <div key={order.id} className="glass" style={{ padding: '2rem', overflow: 'hidden' }}>
@@ -190,64 +242,208 @@ export default function AdminCRM() {
                                 })}
                             </div>
 
-                            {/* Order Details */}
-                            <div className="mobile-stack" style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: '2rem', marginBottom: '1.5rem' }}>
-                                <div>
-                                    <h4 style={{ color: 'var(--primary)', marginBottom: '0.75rem' }}>Customer Details</h4>
-                                    <p><strong>Name:</strong> {order.customer?.name}</p>
-                                    <p><strong>Phone:</strong> <a href={`tel:${order.customer?.phone}`} style={{ color: 'var(--accent)' }}>{order.customer?.phone}</a></p>
-                                    <p style={{ marginTop: '0.75rem' }}><strong>Address:</strong></p>
-                                    <p style={{ color: 'var(--text-muted)', lineHeight: '1.4' }}>{order.customer?.address || order.customer?.location}</p>
-                                    {order.customer?.location?.lat && (
-                                        <a
-                                            href={`https://www.google.com/maps?q=${order.customer.location.lat},${order.customer.location.lng}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            style={{
-                                                display: 'inline-block', marginTop: '0.5rem',
-                                                color: '#3B82F6', fontSize: '0.85rem', textDecoration: 'underline'
-                                            }}
-                                        >
-                                            📍 Open in Google Maps
-                                        </a>
-                                    )}
-                                </div>
-                                <div>
-                                    <h4 style={{ color: 'var(--primary)', marginBottom: '0.75rem' }}>Items Ordered</h4>
-                                    {order.items?.map((item: any, idx: number) => (
-                                        <div key={idx} style={{
-                                            display: 'flex', justifyContent: 'space-between',
-                                            fontSize: '0.9rem', marginBottom: '0.35rem'
-                                        }}>
-                                            <span>{item.name} × {item.quantity}</span>
-                                            <span>₹{(item.price * item.quantity).toLocaleString()}</span>
+                            {/* Order Details OR Edit Form */}
+                            {isEditing && editForm ? (
+                                /* ===== EDIT MODE ===== */
+                                <div style={{ marginBottom: '1.5rem' }}>
+                                    <h4 style={{ color: 'var(--accent)', marginBottom: '1rem' }}>✏️ Editing Order</h4>
+
+                                    {/* Customer Details */}
+                                    <div style={{ marginBottom: '1.5rem' }}>
+                                        <h5 style={{ color: 'var(--primary)', marginBottom: '0.75rem' }}>Customer Details</h5>
+                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                                            <div>
+                                                <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.25rem' }}>Name</label>
+                                                <input
+                                                    className="glass"
+                                                    style={{ width: '100%', padding: '0.5rem', color: 'white', border: '1px solid var(--border)' }}
+                                                    value={editForm.customer?.name || ''}
+                                                    onChange={e => setEditForm({ ...editForm, customer: { ...editForm.customer, name: e.target.value } })}
+                                                />
+                                            </div>
+                                            <div>
+                                                <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.25rem' }}>Phone</label>
+                                                <input
+                                                    className="glass"
+                                                    style={{ width: '100%', padding: '0.5rem', color: 'white', border: '1px solid var(--border)' }}
+                                                    value={editForm.customer?.phone || ''}
+                                                    onChange={e => setEditForm({ ...editForm, customer: { ...editForm.customer, phone: e.target.value } })}
+                                                />
+                                            </div>
+                                            <div style={{ gridColumn: 'span 2' }}>
+                                                <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.25rem' }}>Address</label>
+                                                <input
+                                                    className="glass"
+                                                    style={{ width: '100%', padding: '0.5rem', color: 'white', border: '1px solid var(--border)' }}
+                                                    value={editForm.customer?.address || ''}
+                                                    onChange={e => setEditForm({ ...editForm, customer: { ...editForm.customer, address: e.target.value } })}
+                                                />
+                                            </div>
                                         </div>
-                                    ))}
+                                    </div>
+
+                                    {/* Items */}
+                                    <div style={{ marginBottom: '1.5rem' }}>
+                                        <h5 style={{ color: 'var(--primary)', marginBottom: '0.75rem' }}>Items</h5>
+                                        {editForm.items?.map((item: any, idx: number) => (
+                                            <div key={idx} style={{
+                                                display: 'grid', gridTemplateColumns: '2fr 1fr 1fr',
+                                                gap: '0.75rem', alignItems: 'center', marginBottom: '0.75rem'
+                                            }}>
+                                                <div>
+                                                    <label style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Name</label>
+                                                    <input
+                                                        className="glass"
+                                                        style={{ width: '100%', padding: '0.4rem', color: 'white', border: '1px solid var(--border)' }}
+                                                        value={item.name}
+                                                        onChange={e => updateEditItem(idx, 'name', e.target.value)}
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Qty</label>
+                                                    <input
+                                                        type="number"
+                                                        className="glass"
+                                                        style={{ width: '100%', padding: '0.4rem', color: 'white', border: '1px solid var(--border)' }}
+                                                        value={item.quantity}
+                                                        onChange={e => updateEditItem(idx, 'quantity', e.target.value)}
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <label style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Price (₹)</label>
+                                                    <input
+                                                        type="number"
+                                                        className="glass"
+                                                        style={{ width: '100%', padding: '0.4rem', color: 'white', border: '1px solid var(--border)' }}
+                                                        value={item.price}
+                                                        onChange={e => updateEditItem(idx, 'price', e.target.value)}
+                                                    />
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {/* Transport Fee */}
+                                    <div style={{ marginBottom: '1.5rem' }}>
+                                        <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.25rem' }}>Transport Fee (₹)</label>
+                                        <input
+                                            type="number"
+                                            className="glass"
+                                            style={{ width: '150px', padding: '0.5rem', color: 'white', border: '1px solid var(--border)' }}
+                                            value={editForm.transportFee}
+                                            onChange={e => updateEditTransportFee(Number(e.target.value))}
+                                        />
+                                    </div>
+
+                                    {/* Totals Preview */}
                                     <div style={{
-                                        borderTop: '1px solid var(--border)', marginTop: '0.75rem',
-                                        paddingTop: '0.75rem', fontSize: '0.9rem'
+                                        padding: '1rem', borderRadius: '8px',
+                                        background: 'rgba(245,158,11,0.05)', border: '1px solid rgba(245,158,11,0.2)',
+                                        marginBottom: '1.5rem'
                                     }}>
-                                        {order.subtotal && (
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-                                                <span style={{ color: 'var(--text-muted)' }}>Subtotal</span>
-                                                <span>₹{order.subtotal?.toLocaleString()}</span>
-                                            </div>
-                                        )}
-                                        {order.transportFee !== undefined && (
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-                                                <span style={{ color: 'var(--text-muted)' }}>Transport Fee</span>
-                                                <span>₹{order.transportFee?.toLocaleString()}</span>
-                                            </div>
-                                        )}
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                                            <span style={{ color: 'var(--text-muted)' }}>Subtotal</span>
+                                            <span>₹{editForm.subtotal?.toLocaleString()}</span>
+                                        </div>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                                            <span style={{ color: 'var(--text-muted)' }}>Transport Fee</span>
+                                            <span>₹{editForm.transportFee?.toLocaleString()}</span>
+                                        </div>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', borderTop: '1px solid var(--border)', paddingTop: '0.5rem' }}>
+                                            <span>Total</span>
+                                            <span style={{ color: 'var(--accent)' }}>₹{editForm.total?.toLocaleString()}</span>
+                                        </div>
+                                    </div>
+
+                                    {/* Save / Cancel */}
+                                    <div style={{ display: 'flex', gap: '1rem' }}>
+                                        <button onClick={saveEdit} style={{
+                                            padding: '0.6rem 1.5rem', borderRadius: '8px',
+                                            background: '#22c55e', color: 'white', fontWeight: '600'
+                                        }}>
+                                            💾 Save Changes
+                                        </button>
+                                        <button onClick={cancelEditing} className="glass" style={{
+                                            padding: '0.6rem 1.5rem', fontWeight: '600', border: '1px solid var(--border)'
+                                        }}>
+                                            Cancel
+                                        </button>
                                     </div>
                                 </div>
-                            </div>
+                            ) : (
+                                /* ===== VIEW MODE ===== */
+                                <div className="mobile-stack" style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: '2rem', marginBottom: '1.5rem' }}>
+                                    <div>
+                                        <h4 style={{ color: 'var(--primary)', marginBottom: '0.75rem' }}>Customer Details</h4>
+                                        <p><strong>Name:</strong> {order.customer?.name}</p>
+                                        <p><strong>Phone:</strong> <a href={`tel:${order.customer?.phone}`} style={{ color: 'var(--accent)' }}>{order.customer?.phone}</a></p>
+                                        <p style={{ marginTop: '0.75rem' }}><strong>Address:</strong></p>
+                                        <p style={{ color: 'var(--text-muted)', lineHeight: '1.4' }}>{order.customer?.address || order.customer?.location}</p>
+                                        {order.customer?.location?.lat && (
+                                            <a
+                                                href={`https://www.google.com/maps?q=${order.customer.location.lat},${order.customer.location.lng}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                style={{
+                                                    display: 'inline-block', marginTop: '0.5rem',
+                                                    color: '#3B82F6', fontSize: '0.85rem', textDecoration: 'underline'
+                                                }}
+                                            >
+                                                📍 Open in Google Maps
+                                            </a>
+                                        )}
+                                    </div>
+                                    <div>
+                                        <h4 style={{ color: 'var(--primary)', marginBottom: '0.75rem' }}>Items Ordered</h4>
+                                        {order.items?.map((item: any, idx: number) => (
+                                            <div key={idx} style={{
+                                                display: 'flex', justifyContent: 'space-between',
+                                                fontSize: '0.9rem', marginBottom: '0.35rem'
+                                            }}>
+                                                <span>{item.name} × {item.quantity}</span>
+                                                <span>₹{(item.price * item.quantity).toLocaleString()}</span>
+                                            </div>
+                                        ))}
+                                        <div style={{
+                                            borderTop: '1px solid var(--border)', marginTop: '0.75rem',
+                                            paddingTop: '0.75rem', fontSize: '0.9rem'
+                                        }}>
+                                            {order.subtotal && (
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
+                                                    <span style={{ color: 'var(--text-muted)' }}>Subtotal</span>
+                                                    <span>₹{order.subtotal?.toLocaleString()}</span>
+                                                </div>
+                                            )}
+                                            {order.transportFee !== undefined && (
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
+                                                    <span style={{ color: 'var(--text-muted)' }}>Transport Fee</span>
+                                                    <span>₹{order.transportFee?.toLocaleString()}</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
 
                             {/* Action Buttons */}
                             <div style={{
                                 borderTop: '1px solid var(--border)', paddingTop: '1.5rem',
                                 display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center'
                             }}>
+                                {/* Edit Order button — available for all orders */}
+                                {!isEditing && (
+                                    <button
+                                        onClick={() => startEditing(order)}
+                                        className="glass"
+                                        style={{
+                                            padding: '0.6rem 1.5rem', fontWeight: '600',
+                                            border: '1px solid var(--accent)', color: 'var(--accent)'
+                                        }}
+                                    >
+                                        ✏️ Edit Order
+                                    </button>
+                                )}
+
                                 {/* Status update button */}
                                 {nextAction && nextStatus && order.status !== 'Dispatched' && (
                                     <button
@@ -335,7 +531,7 @@ export default function AdminCRM() {
                                 )}
 
                                 {/* Delivered State */}
-                                {order.status === 'Delivered' && (
+                                {order.status === 'Delivered' && !isEditing && (
                                     <span style={{ color: '#22c55e', fontWeight: '600', marginLeft: 'auto' }}>
                                         ✅ Order Complete
                                     </span>

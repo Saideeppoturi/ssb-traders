@@ -64,7 +64,7 @@ function TrackOrderContent() {
             <p style={{ color: 'var(--text-muted)', marginBottom: '2.5rem' }}>Enter your order ID to see real-time status updates</p>
 
             {/* Search Bar */}
-            <div style={{ display: 'flex', gap: '1rem', marginBottom: '3rem' }}>
+            <div className="mobile-flex-stack" style={{ display: 'flex', gap: '1rem', marginBottom: '3rem' }}>
                 <input
                     type="text"
                     placeholder="Enter Order ID (e.g. SSB-1234567890)"
@@ -210,7 +210,7 @@ function TrackOrderContent() {
                     )}
 
                     {/* Order Details Grid */}
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+                    <div className="mobile-stack" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                         {/* Items */}
                         <div className="glass" style={{ padding: '2rem' }}>
                             <h4 style={{ color: 'var(--primary)', marginBottom: '1rem' }}>Items Ordered</h4>

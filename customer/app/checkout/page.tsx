@@ -259,7 +259,7 @@ export default function CheckoutPage() {
                                 background: step >= s.num ? 'var(--primary)' : 'var(--surface)',
                                 color: step >= s.num ? 'white' : 'var(--text-muted)'
                             }}>{step > s.num ? '✓' : s.num}</div>
-                            <span style={{ fontSize: '0.9rem', fontWeight: step === s.num ? '600' : '400' }}>{s.label}</span>
+                            <span className="checkout-step-label" style={{ fontSize: '0.9rem', fontWeight: step === s.num ? '600' : '400' }}>{s.label}</span>
                         </div>
                         {i < 2 && <div style={{ flex: 1, height: '2px', background: step > s.num ? 'var(--primary)' : 'var(--border)' }} />}
                     </React.Fragment>
@@ -297,7 +297,7 @@ export default function CheckoutPage() {
                                 onChange={e => setFormData({ ...formData, phone: e.target.value })}
                             />
                         </div>
-                        <div style={{ gridColumn: 'span 2' }}>
+                        <div className="address-full-width" style={{ gridColumn: 'span 2' }}>
                             <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>Delivery Address *</label>
                             <input
                                 type="text"
@@ -416,7 +416,7 @@ export default function CheckoutPage() {
                         Choose how you'd like to pay for your order.
                     </p>
 
-                    <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '2rem' }}>
+                    <div className="mobile-flex-stack" style={{ display: 'flex', gap: '1.5rem', marginBottom: '2rem' }}>
                         <label style={{
                             flex: 1, padding: '2rem', borderRadius: '16px', cursor: 'pointer',
                             border: `2px solid ${paymentMethod === 'onsite' ? 'var(--primary)' : 'var(--border)'}`,
@@ -460,7 +460,7 @@ export default function CheckoutPage() {
                             background: 'rgba(34,197,94,0.03)'
                         }}>
                             <h4 style={{ color: '#22c55e', marginBottom: '1.5rem' }}>🏦 Bank Transfer Details</h4>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+                            <div className="mobile-stack" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
                                 <div>
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                                         {[
@@ -502,7 +502,7 @@ export default function CheckoutPage() {
                         </div>
                     )}
 
-                    <div style={{ display: 'flex', gap: '1rem' }}>
+                    <div className="mobile-flex-stack" style={{ display: 'flex', gap: '1rem' }}>
                         <button onClick={() => setStep(1)} className="glass" style={{ padding: '1rem 2rem', fontWeight: '600' }}>
                             ← Back
                         </button>
@@ -540,7 +540,7 @@ export default function CheckoutPage() {
                     {/* Delivery Info */}
                     <div style={{ marginBottom: '2rem' }}>
                         <h4 style={{ color: 'var(--primary)', marginBottom: '1rem' }}>Delivery Details</h4>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                        <div className="mobile-stack" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                             <div>
                                 <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Name</p>
                                 <p style={{ fontWeight: '500' }}>{formData.name}</p>
@@ -592,7 +592,7 @@ export default function CheckoutPage() {
                         </div>
                     </div>
 
-                    <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
+                    <div className="mobile-flex-stack" style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
                         <button onClick={() => setStep(2)} className="glass" style={{ padding: '1rem 2rem', fontWeight: '600' }}>
                             ← Back
                         </button>
