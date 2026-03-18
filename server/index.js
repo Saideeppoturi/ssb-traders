@@ -16,12 +16,41 @@ app.use(bodyParser.json());
 const MONGODB_URI = process.env.MONGODB_URI;
 
 // Connect to MongoDB
+let isConnected = false;
 mongoose.connect(MONGODB_URI)
-    .then(() => console.log('✅ Connected to MongoDB Atlas'))
+    .then(() => {
+        console.log('✅ Connected to MongoDB Atlas');
+        isConnected = true;
+    })
     .catch(err => {
         console.error('❌ MongoDB Connection Error:', err.message);
-        console.warn('⚠️ Server running WITHOUT database connection. Ensure MONGODB_URI is correct in .env');
+        console.warn('⚠️ Server will fallback to local db.json for data store.');
     });
+
+// --- Local DB Fallback Helpers ---
+const DB_PATH = path.join(__dirname, '../data-store/db.json');
+
+const getLocalData = (collection) => {
+    try {
+        const data = JSON.parse(fs.readFileSync(DB_PATH, 'utf8'));
+        return data[collection] || [];
+    } catch (err) {
+        console.error(`❌ Error reading local ${collection}:`, err.message);
+        return [];
+    }
+};
+
+const saveLocalData = (collection, newData) => {
+    try {
+        const data = JSON.parse(fs.readFileSync(DB_PATH, 'utf8'));
+        data[collection] = newData;
+        fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2));
+        return true;
+    } catch (err) {
+        console.error(`❌ Error saving local ${collection}:`, err.message);
+        return false;
+    }
+};
 
 // --- Schemas & Models ---
 
@@ -88,9 +117,15 @@ app.get('/api/bank-details', (req, res) => {
 // GET products
 app.get('/api/products', async (req, res) => {
     try {
-        const products = await Product.find();
-        res.json(products);
+        if (isConnected) {
+            const products = await Product.find();
+            return res.json(products);
+        } else {
+            console.log('ℹ️ Fetching products from local db.json fallback.');
+            return res.json(getLocalData('products'));
+        }
     } catch (err) {
+        console.error("Fetch products error:", err);
         res.status(500).json({ error: 'Failed to fetch products' });
     }
 });
@@ -98,15 +133,15 @@ app.get('/api/products', async (req, res) => {
 // POST update product (Inventory Batch Update)
 app.post('/api/products/update', async (req, res) => {
     try {
-        // This endpoint currently replaces the whole set in local DB logic
-        // For MongoDB, we'll clear and insert, or update matching ones.
-        // Given the manager app's current behavior (sending the whole list), we'll do an upsert or replace.
-        // For efficiency, we'll use bulk operations or simply replace the collection if that's the intent.
-
-        // Simple implementation: clear and re-insert (not ideal but matches previous fs.write logic)
-        await Product.deleteMany({});
-        await Product.insertMany(req.body);
-        res.json({ success: true });
+        if (isConnected) {
+            await Product.deleteMany({});
+            await Product.insertMany(req.body);
+            return res.json({ success: true });
+        } else {
+            console.log('ℹ️ Updating products in local db.json fallback.');
+            const success = saveLocalData('products', req.body);
+            return res.json({ success });
+        }
     } catch (err) {
         res.status(500).json({ error: 'Failed to update products', details: err.message });
     }
@@ -115,8 +150,13 @@ app.post('/api/products/update', async (req, res) => {
 // GET all orders
 app.get('/api/orders', async (req, res) => {
     try {
-        const orders = await Order.find().sort({ date: -1 });
-        res.json(orders);
+        if (isConnected) {
+            const orders = await Order.find().sort({ date: -1 });
+            return res.json(orders);
+        } else {
+            const orders = getLocalData('orders').sort((a, b) => new Date(b.date) - new Date(a.date));
+            return res.json(orders);
+        }
     } catch (err) {
         res.status(500).json({ error: 'Failed to fetch orders' });
     }
@@ -125,9 +165,16 @@ app.get('/api/orders', async (req, res) => {
 // GET single order by ID
 app.get('/api/orders/:id', async (req, res) => {
     try {
-        const order = await Order.findOne({ id: req.params.id });
-        if (!order) return res.status(404).json({ error: 'Order not found' });
-        res.json(order);
+        if (isConnected) {
+            const order = await Order.findOne({ id: req.params.id });
+            if (!order) return res.status(404).json({ error: 'Order not found' });
+            return res.json(order);
+        } else {
+            const orders = getLocalData('orders');
+            const order = orders.find(o => o.id === req.params.id);
+            if (!order) return res.status(404).json({ error: 'Order not found' });
+            return res.json(order);
+        }
     } catch (err) {
         res.status(500).json({ error: 'Error fetching order' });
     }
@@ -137,17 +184,34 @@ app.get('/api/orders/:id', async (req, res) => {
 app.post('/api/orders', async (req, res) => {
     try {
         const otp = Math.floor(1000 + Math.random() * 9000).toString();
-        const newOrder = new Order({
+        const newOrderId = `SSB-${Date.now()}`;
+        const orderData = {
             ...req.body,
-            id: `SSB-${Date.now()}`,
+            id: newOrderId,
             otp: otp,
+            date: new Date().toISOString(),
             paymentConfirmed: req.body.paymentMethod === 'onsite' ? true : false,
-        });
-        await newOrder.save();
-        res.json({ success: true, order: newOrder });
+            status: 'Pending'
+        };
+
+        if (isConnected) {
+            const newOrder = new Order(orderData);
+            await newOrder.save();
+            return res.json({ success: true, order: newOrder });
+        } else {
+            const orders = getLocalData('orders');
+            orders.unshift(orderData);
+            saveLocalData('orders', orders);
+            return res.json({ success: true, order: orderData });
+        }
     } catch (err) {
         res.status(500).json({ error: 'Failed to create order', details: err.message });
     }
+});
+
+// PATCH order status
+app.get('/api/orders', (req, res) => {
+    res.json(BANK_DETAILS);
 });
 
 // PATCH order status
@@ -159,13 +223,22 @@ app.patch('/api/orders/:id/status', async (req, res) => {
             return res.status(400).json({ error: 'Invalid status' });
         }
 
-        const order = await Order.findOneAndUpdate(
-            { id: req.params.id },
-            { status: newStatus },
-            { new: true }
-        );
-        if (!order) return res.status(404).json({ error: 'Order not found' });
-        res.json({ success: true, order });
+        if (isConnected) {
+            const order = await Order.findOneAndUpdate(
+                { id: req.params.id },
+                { status: newStatus },
+                { new: true }
+            );
+            if (!order) return res.status(404).json({ error: 'Order not found' });
+            return res.json({ success: true, order });
+        } else {
+            const orders = getLocalData('orders');
+            const index = orders.findIndex(o => o.id === req.params.id);
+            if (index === -1) return res.status(404).json({ error: 'Order not found' });
+            orders[index].status = newStatus;
+            saveLocalData('orders', orders);
+            return res.json({ success: true, order: orders[index] });
+        }
     } catch (err) {
         res.status(500).json({ error: 'Failed to update status' });
     }
@@ -174,13 +247,22 @@ app.patch('/api/orders/:id/status', async (req, res) => {
 // POST confirm payment
 app.post('/api/orders/:id/confirm-payment', async (req, res) => {
     try {
-        const order = await Order.findOneAndUpdate(
-            { id: req.params.id },
-            { paymentConfirmed: true },
-            { new: true }
-        );
-        if (!order) return res.status(404).json({ error: 'Order not found' });
-        res.json({ success: true, order });
+        if (isConnected) {
+            const order = await Order.findOneAndUpdate(
+                { id: req.params.id },
+                { paymentConfirmed: true },
+                { new: true }
+            );
+            if (!order) return res.status(404).json({ error: 'Order not found' });
+            return res.json({ success: true, order });
+        } else {
+            const orders = getLocalData('orders');
+            const index = orders.findIndex(o => o.id === req.params.id);
+            if (index === -1) return res.status(404).json({ error: 'Order not found' });
+            orders[index].paymentConfirmed = true;
+            saveLocalData('orders', orders);
+            return res.json({ success: true, order: orders[index] });
+        }
     } catch (err) {
         res.status(500).json({ error: 'Failed to confirm payment' });
     }
@@ -189,15 +271,29 @@ app.post('/api/orders/:id/confirm-payment', async (req, res) => {
 // POST verify OTP
 app.post('/api/orders/:id/verify-otp', async (req, res) => {
     try {
-        const order = await Order.findOne({ id: req.params.id });
-        if (!order) return res.status(404).json({ error: 'Order not found' });
+        if (isConnected) {
+            const order = await Order.findOne({ id: req.params.id });
+            if (!order) return res.status(404).json({ error: 'Order not found' });
 
-        if (order.otp === req.body.otp) {
-            order.status = 'Delivered';
-            await order.save();
-            res.json({ success: true, message: 'OTP verified. Order marked as Delivered.' });
+            if (order.otp === req.body.otp) {
+                order.status = 'Delivered';
+                await order.save();
+                return res.json({ success: true, message: 'OTP verified. Order marked as Delivered.' });
+            } else {
+                return res.status(400).json({ error: 'Invalid OTP' });
+            }
         } else {
-            res.status(400).json({ error: 'Invalid OTP' });
+            const orders = getLocalData('orders');
+            const index = orders.findIndex(o => o.id === req.params.id);
+            if (index === -1) return res.status(404).json({ error: 'Order not found' });
+
+            if (orders[index].otp === req.body.otp) {
+                orders[index].status = 'Delivered';
+                saveLocalData('orders', orders);
+                return res.json({ success: true, message: 'OTP verified. Order marked as Delivered.' });
+            } else {
+                return res.status(400).json({ error: 'Invalid OTP' });
+            }
         }
     } catch (err) {
         res.status(500).json({ error: 'Error verifying OTP' });

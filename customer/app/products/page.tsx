@@ -8,15 +8,25 @@ export default function ProductsPage() {
     const { addToCart } = useCart();
     const [displayProducts, setDisplayProducts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
 
     useEffect(() => {
+        setLoading(true);
+        setError(false);
         fetch(`${API_URL}/api/products`)
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) throw new Error('Failed to fetch');
+                return res.json();
+            })
             .then(data => {
                 setDisplayProducts(data);
                 setLoading(false);
             })
-            .catch(err => console.error("Failed to fetch products:", err));
+            .catch(err => {
+                console.error("Failed to fetch products:", err);
+                setError(true);
+                setLoading(false);
+            });
     }, []);
 
     const [quantities, setQuantities] = useState<Record<string, number | string>>({});
@@ -45,7 +55,29 @@ export default function ProductsPage() {
         }
     };
 
-    if (loading) return <div className="container">Loading Products...</div>;
+    if (loading) return (
+        <div className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
+            <div className="glass" style={{ padding: '2rem', textAlign: 'center' }}>
+                <p style={{ fontSize: '1.2rem' }}>Loading Products...</p>
+            </div>
+        </div>
+    );
+
+    if (error) return (
+        <div className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
+            <div className="glass" style={{ padding: '2rem', textAlign: 'center', border: '1px solid rgba(255,0,0,0.3)' }}>
+                <h2 style={{ color: '#ff4444', marginBottom: '1rem' }}>Connection Error</h2>
+                <p style={{ marginBottom: '1.5rem' }}>We're having trouble connecting to the server.</p>
+                <button
+                    onClick={() => window.location.reload()}
+                    className="btn-primary"
+                    style={{ background: 'var(--primary)' }}
+                >
+                    Try Again
+                </button>
+            </div>
+        </div>
+    );
 
     return (
         <div className="container" style={{ paddingBottom: '4rem' }}>

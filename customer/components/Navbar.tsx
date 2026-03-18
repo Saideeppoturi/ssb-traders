@@ -43,7 +43,7 @@ export default function Navbar() {
                 <Link href="/cart" className="btn-primary" style={{ padding: '0.5rem 1rem' }}>
                     Cart ({itemCount})
                 </Link>
-                <Link href="/admin" style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Manager</Link>
+                <Link href="https://ssb-traders.vercel.app/admin" target="_blank" style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Manager</Link>
             </div>
 
             {/* Mobile Toggle Button */}
@@ -76,7 +76,7 @@ export default function Navbar() {
                     <Link href="/cart" onClick={() => setIsOpen(false)} className="btn-primary">
                         Cart ({itemCount})
                     </Link>
-                    <Link href="/admin" onClick={() => setIsOpen(false)} style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Manager Login</Link>
+                    <Link href="https://ssb-traders.vercel.app/admin" target="_blank" onClick={() => setIsOpen(false)} style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Manager Login</Link>
                 </div>
             )}
 
