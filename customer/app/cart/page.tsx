@@ -47,15 +47,15 @@ export default function CartPage() {
                 </div>
 
                 {/* Summary Card */}
-                <div className="glass" style={{ padding: '2rem', height: 'fit-content', position: 'sticky', top: '8rem' }}>
-                    <h2 style={{ marginBottom: '1.5rem', fontSize: '1.5rem' }}>Order Summary</h2>
+                <div className="glass summary-card-mobile" style={{ padding: '2rem', height: 'fit-content', position: 'sticky', top: '8rem' }}>
+                    <h2 className="mobile-title-small" style={{ marginBottom: '1.5rem', fontSize: '1.5rem' }}>Order Summary</h2>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                        <span style={{ color: 'var(--text-muted)' }}>Subtotal</span>
-                        <span>₹{total.toLocaleString()}</span>
+                        <span className="mobile-text-small" style={{ color: 'var(--text-muted)' }}>Subtotal</span>
+                        <span className="mobile-text-small">₹{total.toLocaleString()}</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                        <span style={{ color: 'var(--text-muted)' }}>Delivery</span>
-                        <span style={{ color: '#44ff44' }}>Calculated at next step</span>
+                        <span className="mobile-text-small" style={{ color: 'var(--text-muted)' }}>Delivery</span>
+                        <span className="mobile-text-small" style={{ color: '#44ff44' }}>Calculated at next step</span>
                     </div>
                     <div style={{
                         borderTop: '1px solid var(--border)',
@@ -66,13 +66,24 @@ export default function CartPage() {
                         fontSize: '1.25rem',
                         fontWeight: 'bold'
                     }}>
-                        <span>Total</span>
-                        <span style={{ color: 'var(--accent)' }}>₹{total.toLocaleString()}</span>
+                        <span className="mobile-text-small">Total</span>
+                        <span className="mobile-text-small" style={{ color: 'var(--accent)' }}>₹{total.toLocaleString()}</span>
                     </div>
-                    <Link href="/checkout" className="btn-primary" style={{ display: 'block', textAlign: 'center', marginTop: '2rem', width: '100%' }}>
+                    <Link href="/checkout" className="btn-primary mobile-hidden" style={{ display: 'block', textAlign: 'center', marginTop: '2rem', width: '100%' }}>
                         Proceed to Checkout
                     </Link>
                 </div>
+            </div>
+
+            {/* Floating Mobile Checkout Bar */}
+            <div className="mobile-checkout-sticky" style={{ display: 'none' }}>
+                <div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Total</div>
+                    <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--accent)' }}>₹{total.toLocaleString()}</div>
+                </div>
+                <Link href="/checkout" className="btn-primary" style={{ padding: '0.75rem 1.5rem' }}>
+                    Checkout →
+                </Link>
             </div>
         </div>
     );

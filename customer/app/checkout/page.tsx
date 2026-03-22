@@ -235,8 +235,8 @@ export default function CheckoutPage() {
     }
 
     return (
-        <div className="container" style={{ maxWidth: '900px' }}>
-            <h1 style={{ marginBottom: '1rem' }}>Complete <span className="text-gradient">Purchase</span></h1>
+        <div className="container" style={{ maxWidth: '900px', paddingBottom: '2rem' }}>
+            <h1 className="page-title mobile-title-small" style={{ marginBottom: '1rem' }}>Complete <span className="text-gradient">Purchase</span></h1>
 
             {/* Step Indicator */}
             <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '3rem', alignItems: 'center' }}>
@@ -268,9 +268,9 @@ export default function CheckoutPage() {
 
             {/* ========== STEP 1: Customer Details & Location ========== */}
             {step === 1 && (
-                <div className="glass" style={{ padding: '3rem' }}>
-                    <h3 style={{ marginBottom: '0.5rem' }}>📋 Delivery & Contact Details</h3>
-                    <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '2rem' }}>
+                <div className="glass" style={{ padding: '2rem' }}>
+                    <h3 className="mobile-title-small" style={{ marginBottom: '0.5rem' }}>📋 Delivery & Contact Details</h3>
+                    <p className="mobile-text-xs" style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '2rem' }}>
                         Enter your info, then we&apos;ll ask for location to calculate delivery charges.
                     </p>
 
@@ -397,7 +397,7 @@ export default function CheckoutPage() {
                     <button
                         onClick={() => setStep(2)}
                         disabled={!formData.name || !formData.phone || !formData.address || !deliveryChoice || (deliveryChoice === 'current' && distanceKm > 30)}
-                        className="btn-accent"
+                        className="btn-accent mobile-text-small"
                         style={{
                             width: '100%', padding: '1rem', fontSize: '1.1rem',
                             opacity: (!formData.name || !formData.phone || !formData.address || !deliveryChoice) ? 0.5 : 1
@@ -410,9 +410,9 @@ export default function CheckoutPage() {
 
             {/* ========== STEP 2: Payment Method ========== */}
             {step === 2 && (
-                <div className="glass" style={{ padding: '3rem' }}>
-                    <h3 style={{ marginBottom: '0.5rem' }}>💳 Select Payment Method</h3>
-                    <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '2rem' }}>
+                <div className="glass" style={{ padding: '2rem' }}>
+                    <h3 className="mobile-title-small" style={{ marginBottom: '0.5rem' }}>💳 Select Payment Method</h3>
+                    <p className="mobile-text-xs" style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '2rem' }}>
                         Choose how you'd like to pay for your order.
                     </p>
 
@@ -503,10 +503,10 @@ export default function CheckoutPage() {
                     )}
 
                     <div className="mobile-flex-stack" style={{ display: 'flex', gap: '1rem' }}>
-                        <button onClick={() => setStep(1)} className="glass" style={{ padding: '1rem 2rem', fontWeight: '600' }}>
+                        <button onClick={() => setStep(1)} className="glass mobile-text-small" style={{ padding: '1rem 2rem', fontWeight: '600' }}>
                             ← Back
                         </button>
-                        <button onClick={() => setStep(3)} className="btn-accent" style={{ flex: 1, padding: '1rem', fontSize: '1.1rem' }}>
+                        <button onClick={() => setStep(3)} className="btn-accent mobile-text-small" style={{ flex: 1, padding: '1rem', fontSize: '1.1rem' }}>
                             Review Order →
                         </button>
                     </div>
@@ -515,8 +515,8 @@ export default function CheckoutPage() {
 
             {/* ========== STEP 3: Order Review & Confirm ========== */}
             {step === 3 && (
-                <div className="glass" style={{ padding: '3rem' }}>
-                    <h3 style={{ marginBottom: '2rem' }}>📦 Order Review</h3>
+                <div className="glass" style={{ padding: '2rem' }}>
+                    <h3 className="mobile-title-small" style={{ marginBottom: '2rem' }}>📦 Order Review</h3>
 
                     {/* Items */}
                     <div style={{ marginBottom: '2rem' }}>
@@ -593,12 +593,12 @@ export default function CheckoutPage() {
                     </div>
 
                     <div className="mobile-flex-stack" style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
-                        <button onClick={() => setStep(2)} className="glass" style={{ padding: '1rem 2rem', fontWeight: '600' }}>
+                        <button onClick={() => setStep(2)} className="glass mobile-text-small" style={{ padding: '1rem 2rem', fontWeight: '600' }}>
                             ← Back
                         </button>
                         <button
                             onClick={handlePlaceOrder}
-                            className="btn-accent"
+                            className="btn-accent mobile-text-small"
                             style={{ flex: 1, padding: '1rem', fontSize: '1.1rem' }}
                         >
                             🛒 Place Order
