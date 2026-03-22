@@ -69,14 +69,14 @@ export default function CartPage() {
                         <span className="mobile-text-small">Total</span>
                         <span className="mobile-text-small" style={{ color: 'var(--accent)' }}>₹{total.toLocaleString()}</span>
                     </div>
-                    <Link href="/checkout" className="btn-primary mobile-hidden" style={{ display: 'block', textAlign: 'center', marginTop: '2rem', width: '100%' }}>
+                    <Link href="/checkout" className="btn-primary" style={{ display: 'block', textAlign: 'center', marginTop: '2rem', width: '100%' }}>
                         Proceed to Checkout
                     </Link>
                 </div>
             </div>
 
             {/* Floating Mobile Checkout Bar */}
-            <div className="mobile-checkout-sticky" style={{ display: 'none' }}>
+            <div className="mobile-checkout-sticky">
                 <div>
                     <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Total</div>
                     <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--accent)' }}>₹{total.toLocaleString()}</div>
