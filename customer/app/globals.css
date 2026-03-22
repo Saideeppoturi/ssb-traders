@@ -248,3 +248,16 @@ button {
     display: none !important;
   }
 }
+
+/* Footer Link Enhancements */
+.footer-link {
+  color: var(--text-muted);
+  transition: var(--transition);
+  display: inline-block;
+  cursor: pointer;
+}
+
+.footer-link:hover {
+  color: var(--primary);
+  transform: translateX(4px);
+}

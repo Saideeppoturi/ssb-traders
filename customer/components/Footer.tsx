@@ -15,21 +15,24 @@ export default function Footer() {
             }}>
                 <div>
                     <h3 style={{ color: 'var(--primary)', marginBottom: '1rem', fontWeight: '900' }}>Sri Sai Balaji Traders</h3>
+                    <p style={{ color: 'var(--text-muted)', lineHeight: '1.6', marginBottom: '1rem' }}>
+                        Your trusted partner for premium cement, steel, and binding materials. We provide an extensive range of high-quality construction materials for residential, commercial, and industrial projects.
+                    </p>
                     <p style={{ color: 'var(--text-muted)', lineHeight: '1.6' }}>
-                        Premium supplier of Cement and Binding materials. Quality you can build on.
+                        Partnered with industry-leading brands to guarantee durability and strength in every bag. Contact us for bulk orders and reliable site delivery.
                     </p>
                 </div>
                 <div>
                     <h4 style={{ marginBottom: '1rem' }}>Quick Links</h4>
                     <ul style={{ listStyle: 'none', color: 'var(--text-muted)' }}>
                         <li style={{ marginBottom: '0.5rem' }}>
-                            <Link href="/products" style={{ color: 'var(--text-muted)', transition: 'color 0.2s' }}>Products</Link>
+                            <Link href="/products" className="footer-link">Products</Link>
                         </li>
                         <li style={{ marginBottom: '0.5rem' }}>
-                            <Link href="/about" style={{ color: 'var(--text-muted)', transition: 'color 0.2s' }}>About Us</Link>
+                            <Link href="/about" className="footer-link">About Us</Link>
                         </li>
                         <li style={{ marginBottom: '0.5rem' }}>
-                            <Link href="/location" style={{ color: 'var(--text-muted)', transition: 'color 0.2s' }}>Locate Us</Link>
+                            <Link href="/location" className="footer-link">Locate Us</Link>
                         </li>
                     </ul>
                 </div>
